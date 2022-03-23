@@ -72,12 +72,32 @@ server.get("/posts/", (req, res) => {
 });
 
 server.get("/posts/:author", (req, res) => {
-  const thisAuthor = req.query.author;
-  const newArray = posts.filter((post) => post.author === thisAuthor);
-  return res.send(newArray);
-  // if (post.some((e) => e.author === thisAuthor)) {
-  //   return res.status(200).send(filter(thisAuthor));
-  // }
+  // const {author} = req.body;
+  const thisAuthor = req.params.author;
+  if (!posts.some((e) => e.author === thisAuthor)) {
+    return res.status(STATUS_USER_ERROR).json({
+      error: "No existe ningun post del autor indicado",
+    });
+  } else {
+    const filterAuthor = posts.filter((e) => e.author === thisAuthor);
+    return res.status(200).send(filterAuthor);
+  }
+});
+
+server.get("/posts/:author/:title", (req, res) => {
+  // const {author} = req.body;
+  const thisAuthor = req.params.author;
+  const thisTitle = req.params.title;
+  if (!posts.some((e) => e.author === thisAuthor && e.title === thisTitle)) {
+    return res.status(STATUS_USER_ERROR).json({
+      error: "No existe ningun post con dicho titulo y autor indicado",
+    });
+  } else {
+    const filterAuthor = posts.filter(
+      (e) => e.author === thisAuthor && e.title === thisTitle
+    );
+    return res.status(200).send(filterAuthor);
+  }
 });
 
 module.exports = { posts, server };
